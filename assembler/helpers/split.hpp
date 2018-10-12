@@ -1,4 +1,4 @@
-    #ifndef SPLIT_H
+#ifndef SPLIT_H
 #define SPLIT_H
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
