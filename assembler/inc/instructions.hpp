@@ -9,6 +9,8 @@
 #include <vector>
 #include <map>
 
+namespace Tables {
+
 struct Instruction {
     Instruction(std::string mnemonic, uint8_t operands, uint8_t op_code, uint8_t size) :
         mnemonic(mnemonic), operands(operands), op_code(op_code), size(size) {}
@@ -38,5 +40,7 @@ std::map<std::string, Instruction> instruction_table {
     { "output", Instruction("output", 1, 13, 2) },
     { "stop",   Instruction("stop",   0, 14, 1) },
 };
+
+} // end namespace Tables
 
 #endif
