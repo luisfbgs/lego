@@ -7,21 +7,14 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "split.hpp"
 
 struct Line {
     Line(std::string line) {
         // split the line based on spaces
-        std::vector<std::string> aux_elements = Helpers::split(line, ' ');
-        std::vector<std::string> elements;
-
         // only add strings that are not empty
-        // ignore everything after a semicolon since it is a comment
-		for (auto it : aux_elements) {
-			if(it[0] == ' ' || it.empty()) continue;
-			if(it[0] == ';') break;
-			elements.push_back(it);
-		}
+        std::vector<std::string> elements = Helpers::split_invisible_semicolon(line);
 
         // if line does not have anything, return
 		if (elements.empty()) return;
@@ -37,6 +30,7 @@ struct Line {
         // set operation
         if (pos >= elements.size()) return;
         operation = elements[pos];
+        std::transform(operation.begin(), operation.end(), operation.begin(), ::tolower);
 
         // iterate over remaining strings adding them to operands
         // add all substrings to a single string until a colon is found
