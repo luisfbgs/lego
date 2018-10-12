@@ -5,12 +5,13 @@ Montador e ligador de uma linguagem assembler simplificada. Desenvolvido para a 
 ---
 
 ## Membros
+ * Luis Felipe
  * Mikael Mello
 
 ## Building
 
 ```bash
-$ git clone https://github.com/mikaelmello/lego.git
+$ git clone https://github.com/luisfbgs/lego.git
 $ cd lego
 $ make
 ```
