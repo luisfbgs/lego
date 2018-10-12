@@ -12,6 +12,8 @@
 namespace Tables {
 
 struct Instruction {
+    Instruction() {}
+
     Instruction(std::string mnemonic, uint8_t operands, uint8_t op_code, uint8_t size) :
         mnemonic(mnemonic), operands(operands), op_code(op_code), size(size) {}
 

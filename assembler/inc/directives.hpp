@@ -12,6 +12,8 @@
 namespace Tables {
 
 struct Directive {
+    Directive() {}
+
     Directive(std::string mnemonic, uint8_t operands, uint8_t size) :
         mnemonic(mnemonic), operands(operands), size(size) {}
 
