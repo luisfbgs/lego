@@ -6,9 +6,11 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <string>
+#include <vector>
+#include "line.hpp"
 
-bool first_pass(std::string source_file);
+std::vector<Line> first_pass(std::string source_file);
 
-bool second_pass(std::string source_file);
+std::vector<uint8_t> second_pass(std::vector<Line>);
 
 #endif

@@ -8,20 +8,24 @@
 #include "passes.hpp"
 #include "instructions.hpp"
 #include "directives.hpp"
-#include "line.hpp"
 
 int resolve_directive(std::string s){
 	return 1;
 }
 
-std::map<std::string, int> symbol_table;
+std::map<std::string, uint8_t> symbol_table;
 
-bool first_pass(std::string source_file) {
+Tables::Instruction instructions;
+Tables::Directive directives;
+
+std::vector<Line> first_pass(std::string source_file) {
 	int position_count = 0;
 	int line_count = 1;
 	std::ifstream source;
 	source.open(source_file);
 	std::string raw_line;
+
+	std::vector<Line> code;
 	while (getline(source, raw_line)) {
 		Line line(raw_line);
 
@@ -30,7 +34,7 @@ bool first_pass(std::string source_file) {
 			if (symbol_table.count(label)) {
 				std::cout << "Erro: Rótulo " << label <<
 					" redefinido na linha " << line_count << std::endl;
-				return false;
+				exit(0);
 			}
 			else {
 				symbol_table[label] = position_count;
@@ -38,61 +42,55 @@ bool first_pass(std::string source_file) {
 		}
 		if (!line.operation.empty()) {
 			std::string operation = line.operation;
-			if (Tables::instruction_table.count(operation)) {
-				position_count += Tables::instruction_table[operation].size;
+			if (instructions.table.count(operation)) {
+				position_count += instructions.table[operation].size;
+				line.type = 1;
 			}
-			else if (Tables::directive_table.count(operation)) {
+			else if (directives.table.count(operation)) {
 				position_count += resolve_directive(operation);
+				line.type = 2;
 			}
 			else {
 				std::cout << "Erro: Operação " << operation <<
 					" não identificada na linha " << line_count << std::endl;
-				return false;
+				exit(0);
 			}
+
+			code.push_back(line);
 		}
 		line_count++;
 	}
-	return true;
+
+	return code;
 }
 
-bool second_pass(std::string source_file) {
+std::vector<uint8_t> second_pass(std::vector<Line> code) {
     int position_count = 0;
     int line_count = 1;
-    std::ifstream source;
-    source.open(source_file);
-    std::string line;
-    while (getline(source, line)) {
-        std::vector<std::string> aux_elements = Helpers::split(line, ' ');
-        std::vector<std::string> elements;
 
-		for (auto it : aux_elements) {
-			if(it[0] == ' ' || it.empty()) continue;
-			if(it[0] == ';') break;
-			elements.push_back(it);
+	std::vector<uint8_t> out;
+    for (Line line : code) {
+		
+		std::string operation = line.operation;
+		std::vector<std::string> operands = line.operands;
+
+		if(line.type == 1){
+			if(operands.size() != instructions.table[operation].operands){
+				std::cout << "Erro: Operação " << operation << " requer " <<
+					 instructions.table[operation].operands << " operadores mas foram providdos " <<
+					 operands.size() << " operadores na linha " << line_count << std::endl;
+				exit(0);
+			}
 		}
-
-		if (elements.empty()) continue;
-
-		std::string label, operation;
-
-		int pos = 0;
-
-		if (elements[pos].back() == ':') pos++;
-
-		if (pos < elements.size()) {
-			operation = elements[pos];
-			if (Tables::instruction_table.count(operation)) {
-				position_count += Tables::instruction_table[operation].size;
-			}
-			else if (Tables::directive_table.count(operation)) {
-			}
-			else {
-				std::cout << "Erro: Operação " << operation <<
-					" não identificada na linha " << line_count << std::endl;
-				return false;
+		else if(line.type == 2){
+			if(operands.size() != directives.table[operation].operands){
+				std::cout << "Erro: Operação " << operation << " requer " <<
+					 instructions.table[operation].operands << " operadores mas foram providdos " <<
+					 operands.size() << " operadores na linha " << line_count << std::endl;
+				exit(0);
 			}
 		}
 		line_count++;
     }
-	return true;
+	return out;
 }
