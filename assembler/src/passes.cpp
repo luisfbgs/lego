@@ -1,3 +1,6 @@
+
+#include "passes.hpp"
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -5,7 +8,6 @@
 #include <map>
 #include <vector>
 #include <iterator>
-#include "passes.hpp"
 #include "instructions.hpp"
 #include "directives.hpp"
 
@@ -14,9 +16,6 @@ int resolve_directive(std::string s){
 }
 
 std::map<std::string, uint8_t> symbol_table;
-
-Tables::Instruction instructions;
-Tables::Directive directives;
 
 std::vector<Line> first_pass(std::string source_file) {
 	int position_count = 0;
@@ -42,11 +41,11 @@ std::vector<Line> first_pass(std::string source_file) {
 		}
 		if (!line.operation.empty()) {
 			std::string operation = line.operation;
-			if (instructions.table.count(operation)) {
-				position_count += instructions.table[operation].size;
+			if (Tables::instruction_table.count(operation)) {
+				position_count += Tables::instruction_table[operation].size;
 				line.type = 1;
 			}
-			else if (directives.table.count(operation)) {
+			else if (Tables::directive_table.count(operation)) {
 				position_count += resolve_directive(operation);
 				line.type = 2;
 			}
@@ -75,17 +74,17 @@ std::vector<uint8_t> second_pass(std::vector<Line> code) {
 		std::vector<std::string> operands = line.operands;
 
 		if(line.type == 1){
-			if(operands.size() != instructions.table[operation].operands){
+			if(operands.size() != Tables::instruction_table[operation].operands){
 				std::cout << "Erro: Operação " << operation << " requer " <<
-					 instructions.table[operation].operands << " operadores mas foram providdos " <<
+					 Tables::instruction_table[operation].operands << " operadores mas foram providdos " <<
 					 operands.size() << " operadores na linha " << line_count << std::endl;
 				exit(0);
 			}
 		}
 		else if(line.type == 2){
-			if(operands.size() != directives.table[operation].operands){
+			if(operands.size() != Tables::directive_table[operation].operands){
 				std::cout << "Erro: Operação " << operation << " requer " <<
-					 instructions.table[operation].operands << " operadores mas foram providdos " <<
+					 Tables::instruction_table[operation].operands << " operadores mas foram providdos " <<
 					 operands.size() << " operadores na linha " << line_count << std::endl;
 				exit(0);
 			}
