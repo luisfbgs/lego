@@ -20,6 +20,8 @@ TwoPass::TwoPass(std::string source_file) {
 	obj_file   = source_file + ".obj";
 
 	source.open(input_file);
+	source.open(pre_file);
+	source.open(obj_file);
 }
 
 std::vector<Line> TwoPass::first_pass() {
@@ -58,6 +60,7 @@ std::vector<Line> TwoPass::first_pass() {
 
 			code.push_back(line);
 		}
+
 		line_count++;
 	}
 

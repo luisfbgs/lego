@@ -20,6 +20,17 @@ private:
 
 	std::vector<std::string> error_list;
 	std::ifstream source;
+	std::ofstream pre;
+	std::ofstream obj;
+
+	enum Sections {
+		NONE,
+		DATA,
+		TEXT,
+		BSS
+	};
+
+	Sections section = NONE;
 
 	int resolve_directive(std::string s);
 
