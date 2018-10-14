@@ -1,6 +1,6 @@
-#include "passes.hpp"
+#include "twopass.hpp"
 
 int main() {
-     
-    first_pass("teste.asm");
+    TwoPass algorithm("teste");
+    algorithm.first_pass();
 }
