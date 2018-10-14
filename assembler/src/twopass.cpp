@@ -31,7 +31,7 @@ std::vector<Line> TwoPass::first_pass() {
 
 	std::vector<Line> code;
 	while (getline(source, raw_line)) {
-		Line line(raw_line);
+		Line line(raw_line, line_count);
 
 		if (!line.label.empty()) {
 			std::string label = line.label;
