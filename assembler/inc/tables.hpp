@@ -1,5 +1,5 @@
-#ifndef INSTRUCTIONS_H
-#define INSTRUCTIONS_H
+#ifndef TABLES_H
+#define TABLES_H
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *                  INCLUDES AND DEFINES
@@ -26,7 +26,20 @@ namespace Tables {
 		uint8_t size;
 	};
 
-	std::map<std::string, Instruction> instruction_table {
+	struct Directive {
+		Directive() {}
+
+		Directive(std::string mnemonic, uint8_t operands, uint8_t size) :
+			mnemonic(mnemonic), operands(operands), size(size) {}
+
+		std::string mnemonic;
+
+		uint8_t operands;
+
+		uint8_t size;
+	};
+
+	std::map<std::string, Instruction> instructions {
 		{ "add",    Instruction("add",    1, 1,  2) },
 		{ "sub",    Instruction("sub",    1, 2,  2) },
 		{ "mult",   Instruction("mult",   1, 3,  2) },
@@ -43,6 +56,19 @@ namespace Tables {
 		{ "stop",   Instruction("stop",   0, 14, 1) },
 	};
 
+	std::map<std::string, Directive> directives {
+		{ "if",      Directive("if",      1, 0) },
+		{ "equ",     Directive("equ",     1, 0) },
+		{ "section", Directive("section", 1, 0) },
+		{ "space",   Directive("space",   1, 1) },
+		{ "const",   Directive("const",   1, 1) },
+		{ "public",  Directive("public",  0, 0) },
+		{ "extern",  Directive("extern",  0, 0) },
+		{ "begin",   Directive("begin",   0, 0) },
+		{ "end",     Directive("end",     0, 0) },
+	};
+
+	std::map<std::string, uint8_t> symbols;
 
 } // end namespace Tables
 
