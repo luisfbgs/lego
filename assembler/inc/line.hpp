@@ -54,6 +54,8 @@ struct Line {
     std::string operation;
 
     std::vector<std::string> operands;
+
+	uint8_t type;
 };
 
 #endif
