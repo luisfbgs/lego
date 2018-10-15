@@ -23,6 +23,7 @@ struct Line {
         int pos = 0;
         if (elements[pos].back() == ':') {
             label = elements[pos];
+			label.pop_back();
             pos += 1;
         }
 
@@ -31,6 +32,7 @@ struct Line {
         if (pos >= elements.size()) return;
         operation = elements[pos];
         std::transform(operation.begin(), operation.end(), operation.begin(), ::tolower);
+		pos += 1;
 
         // iterate over remaining strings adding them to operands
         // add all substrings to a single string until a colon is found
