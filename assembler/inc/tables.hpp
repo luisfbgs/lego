@@ -30,10 +30,12 @@ namespace Tables {
 	struct Directive {
 		Directive() {}
 
-		Directive(std::string mnemonic, uint8_t operands, uint8_t size) :
-			mnemonic(mnemonic), operands(operands), size(size) {}
+		Directive(std::string mnemonic, uint8_t id, uint8_t operands, uint8_t size) :
+			mnemonic(mnemonic), id(id), operands(operands), size(size) {}
 
 		std::string mnemonic;
+
+		uint8_t id;
 
 		uint8_t operands;
 
@@ -45,7 +47,7 @@ namespace Tables {
 
 	extern const std::map<std::string, Directive> directives;
 
-	extern std::map<std::string, uint8_t> symbols;
+	extern std::map<std::string, uint16_t> symbols;
 
 } // end namespace Tables
 

@@ -5,15 +5,15 @@
 namespace Tables{
 
 	const std::map<std::string, Directive> directives {
-		{ "if",      Directive("if",      1, 0) },
-		{ "equ",     Directive("equ",     1, 0) },
-		{ "section", Directive("section", 1, 0) },
-		{ "space",   Directive("space",   1, 1) },
-		{ "const",   Directive("const",   1, 1) },
-		{ "public",  Directive("public",  0, 0) },
-		{ "extern",  Directive("extern",  0, 0) },
-		{ "begin",   Directive("begin",   0, 0) },
-		{ "end",     Directive("end",     0, 0) },
+		{ "if",      Directive("if",      1, 1, 0) },
+		{ "equ",     Directive("equ",     2, 1, 0) },
+		{ "section", Directive("section", 3, 1, 0) },
+		{ "space",   Directive("space",   4, 1, 1) },
+		{ "const",   Directive("const",   5, 1, 1) },
+		{ "public",  Directive("public",  6, 0, 0) },
+		{ "extern",  Directive("extern",  7, 0, 0) },
+		{ "begin",   Directive("begin",   8, 0, 0) },
+		{ "end",     Directive("end",     9, 0, 0) },
 	};
 
 	const std::map<std::string, Instruction> instructions {
@@ -33,5 +33,5 @@ namespace Tables{
 		{ "stop",   Instruction("stop",   0, 14, 1) },
 	};
 
-	std::map<std::string, uint8_t> symbols;
+	std::map<std::string, uint16_t> symbols;
 }
