@@ -153,7 +153,12 @@ void TwoPass::second_pass(std::vector<Line> code) {
 			obj << std::to_string(Tables::instructions.at(operation).op_code) << " ";
 		
 			for (std::string operand : operands) {
-				obj << std::to_string(Helpers::get_value(operand)) << " ";
+				try { 
+					obj << std::to_string(Helpers::get_value(operand)) << " ";
+				}
+				catch(const std::exception& error) {
+					error_list.push_back("Erro: Símbolo não definido na linha " + std::to_string(line_count));
+				}
 			}
 		}
 		else if (line.type == 2){
