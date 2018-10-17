@@ -43,15 +43,19 @@ namespace Helpers{
 	}
 
 	bool is_number(std::string &s) {
-		for(char c : s) {
-			if(!std::isdigit(c)) {
+		if(!std::isdigit(s[0]) && s[0] != '-' && s[0] != '+') {
+			return false;
+		}
+
+		for(int i = 1; i < s.size(); i++) {
+			if(!std::isdigit(s[i])) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	uint8_t get_value(std::string operand) {
+	uint16_t get_value(std::string operand) {
 		std::string aux;
 		int pos = 0;
 		uint8_t value = 0;

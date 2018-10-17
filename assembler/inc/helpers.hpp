@@ -17,7 +17,7 @@ namespace Helpers{
 
 	std::vector<std::string> split_invisible_semicolon(const std::string &s);
 
-	uint8_t get_value(std::string operand);
+	uint16_t get_value(std::string operand);
 
 	bool is_number(std::string &s);
 
