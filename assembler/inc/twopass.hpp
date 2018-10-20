@@ -32,9 +32,16 @@ class TwoPass {
 
 		Sections section = NONE;
 
+		bool resolve_if(Line line);
+		void resolve_equ(Line line);
+		uint16_t resolve_space(Line line);
+
 		// First element of the pair = size of directive
-		// Second element of the pair = type of directive, 1 for IF, 2 for EQU, 0 for the others
-		std::pair<uint16_t, int> resolve_directive(std::string operation, std::vector<std::string> operands);
+		// Second element of the pair = true if the next line must be ignored
+		std::pair<uint16_t, bool> resolve_directive(Line line);
+
+		void store_label(Line line, int position_count);
+		void replace_equ(std::vector<std::string> &operands);
 
 	public:
 
