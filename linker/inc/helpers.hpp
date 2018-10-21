@@ -21,6 +21,8 @@ namespace Helpers{
 
 	bool is_number(std::string &s);
 
+	bool replace(std::string& str, const std::string& from, const std::string& to);
+
 } // end namespace Helpers
 
 #endif

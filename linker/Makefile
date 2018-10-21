@@ -5,7 +5,7 @@ OBJ      = $(addprefix obj/,$(notdir $(SRCS:%.cpp=%.o)))
 LIBS     = 
 INCS     = 
 CXXINCS  = -I"helpers/" -I"inc/"
-BIN      = assembler
+BIN      = ligador
 CXXFLAGS = $(CXXINCS) -std=c++11 -g3 -ggdb3
 CFLAGS   = $(INCS) -std=c11 -ggdb3
 RM       = rm -f
