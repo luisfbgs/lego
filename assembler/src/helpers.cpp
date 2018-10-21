@@ -55,6 +55,23 @@ namespace Helpers{
 		return true;
 	}
 
+	bool hexdigit(char c) {
+		return (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+	}
+
+	bool is_hex(std::string &s) {
+		if(s.size() < 2 || s[0] != '0' || s[1] != 'x') {
+			return false;
+		}
+
+		for(int i = 2; i < s.size(); i++) {
+			if(!std::isdigit(s[i]) && !hexdigit(s[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	uint16_t get_value(std::string operand) {
 		std::string aux;
 		int pos = 0;

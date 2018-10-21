@@ -35,10 +35,14 @@ class TwoPass {
 		bool resolve_if(Line line);
 		void resolve_equ(Line line);
 		uint16_t resolve_space(Line line);
+		void resolve_const(Line line);
+		void resolve_section(Line line);
 
 		// First element of the pair = size of directive
 		// Second element of the pair = true if the next line must be ignored
 		std::pair<uint16_t, bool> resolve_directive(Line line);
+		void write_directive(Line line);
+		
 
 		void store_label(Line line, int position_count);
 		void replace_equ(std::vector<std::string> &operands);

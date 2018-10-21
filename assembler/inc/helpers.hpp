@@ -21,6 +21,10 @@ namespace Helpers{
 
 	bool is_number(std::string &s);
 
+	bool hexdigit(char c);
+
+	bool is_hex(std::string &s);
+
 } // end namespace Helpers
 
 #endif
