@@ -9,9 +9,10 @@
 #include "twopass.hpp"
 #include "tables.hpp"
 #include "helpers.hpp"
+#include "directives.hpp"
 
-// Stores the values of EQUs labels
-std::map<std::string, std::string> equ_table;
+TwoPass::Sections TwoPass::section = TwoPass::NONE;
+std::vector<std::string> TwoPass::error_list;
 
 TwoPass::TwoPass(std::string source_file) {
 	input_file = source_file + ".asm";
@@ -19,139 +20,6 @@ TwoPass::TwoPass(std::string source_file) {
 	obj_file   = source_file + ".obj";
 
 	source.open(input_file);
-	pre.open(pre_file);
-	obj.open(obj_file);
-}
-
-bool TwoPass::resolve_if(Line line) {
-	std::vector<std::string> operands = line.operands;
-	if(operands.size() != 1 || !Helpers::is_number(operands[0])) {
-		error_list.push_back("Erro: Operando do IF na lina " +
-			 std::to_string(line.original_line));
-	}
-	else if(std::stoi(operands[0]) != 1) {
-		return true;
-	}
-	return false;
-}
-
-void TwoPass::resolve_equ(Line line) {
-	if(section != NONE) {
-		error_list.push_back("Erro: EQU deve estar antes de qualquer seção, na linha " +
-			 std::to_string(line.original_line));
-	}
-	std::vector<std::string> operands = line.operands;
-	if(operands.size() != 1) {
-		error_list.push_back("Erro: Número de operandos no EQU na linha " +
-			 std::to_string(line.original_line));
-	}
-	else if(line.label.empty()) {
-		error_list.push_back("Erro: EQU sem label na linha " +
-			 std::to_string(line.original_line));
-	}
-	else {
-		equ_table[line.label] = line.operands[0];
-	}
-}
-
-uint16_t TwoPass::resolve_space(Line line) {
-	if(section != BSS) {
-		error_list.push_back("Erro: CONST deve estar na seção BSS, na linha " +
-			 std::to_string(line.original_line));
-		return 0;
-	}
-	std::vector<std::string> operands = line.operands;
-	if(operands.size() > 1 || (operands.size() && !Helpers::is_number(operands[0]))) {
-		error_list.push_back("Erro: Operando SPACE na linha" + 
-			std::to_string(line.original_line));
-		return 0;
-	}
-	else {
-		if(operands.empty()) {
-			return 1;
-		}
-		else {
-			return std::stoi(operands[0]);
-		}
-	}
-}
-
-void TwoPass::resolve_const(Line line) {
-	if(section != DATA) {
-		error_list.push_back("Erro: CONST deve estar na seção DATA, na linha " +
-			 std::to_string(line.original_line));
-		return;
-	}
-	std::vector<std::string> operands = line.operands;
-	if(operands.size() != 1 || (operands.size() && !Helpers::is_number(operands[0]) && !Helpers::is_hex(operands[0]))) {
-		error_list.push_back("Erro: Operando CONST na linha " + 
-			std::to_string(line.original_line));
-	}
-}
-
-void TwoPass::resolve_section(Line line) {
-	if(line.operands.size() != 1) {
-		error_list.push_back("Erro: Operando SECTION na linha " + 
-			std::to_string(line.original_line));
-		return;
-	}
-
-	bool error = false;
-	if(line.operands[0] == "TEXT") {
-		if(section == NONE) {
-			section = TEXT;
-		}
-		else {
-			error = true;
-		}
-	}
-	else if(line.operands[0] == "DATA") {
-		if(section == NONE || section == DATA) {
-			error = true;
-		}
-		else {
-			section = DATA;
-		}
-	}
-	else if(line.operands[0] == "BSS") {
-		if(section == NONE || section == BSS) {
-			error = true;
-		}
-		else {
-			section = BSS;
-		}
-	}
-	else {
-		error = true;
-	}
-
-	if(error) {
-		error_list.push_back("Erro: Operando SECTION na linha " + 
-			std::to_string(line.original_line) + " as secoes devem ser: " + 
-			"TEXT, DATA ou BSS. Cada seção só pode ser definida uma vez e " +
-			"a seção TEXT deve vir antes da outras");
-
-	}
-}
-
-std::pair<uint16_t, bool> TwoPass::resolve_directive(Line line) {
-	std::string operation = line.operation;
-	switch(Tables::directives.at(operation).id) {
-		case 1: // IF
-			return {0, resolve_if(line)};
-		case 2: // EQU
-			resolve_equ(line);
-			return {0, false};
-		case 3: // SECTION
-			resolve_section(line);
-			return {0, false};
-		case 4: // SPACE
-			return {resolve_space(line), false};
-		case 5: // CONST
-			resolve_const(line);
-			return {1, false};
-	}
-	return {0, false};
 }
 
 void TwoPass::write_directive(Line line) {
@@ -184,7 +52,7 @@ void TwoPass::store_label(Line line, int position_count) {
 	if (!label.empty()) {
 		if (Tables::symbols.count(label)) {
 			error_list.push_back("Erro: Simbolo " + label +
-				" redefinido na linha " + std::to_string(line.original_line));
+					" redefinido na linha " + std::to_string(line.original_line));
 		}
 		else {
 			Tables::symbols[label] = position_count;
@@ -194,8 +62,8 @@ void TwoPass::store_label(Line line, int position_count) {
 
 void TwoPass::replace_equ(std::vector<std::string> &operands) {
 	for(std::string &operand : operands) {
-		if(equ_table.count(operand)) {
-			operand = equ_table[operand];
+		if(Tables::equ.count(operand)) {
+			operand = Tables::equ[operand];
 		}
 	}
 }
@@ -224,8 +92,8 @@ std::vector<Line> TwoPass::first_pass() {
 			std::string operation = line.operation;
 			if (Tables::instructions.count(operation)) {
 				if(section != TEXT) {
-				error_list.push_back("Erro: Instruções devem estar na seção TEXT, na linha " +
-					 std::to_string(line.original_line));
+					error_list.push_back("Erro: Instruções devem estar na seção TEXT, na linha " +
+							std::to_string(line.original_line));
 				}
 				position_count += Tables::instructions.at(operation).size;
 				line.type = 1;
@@ -233,20 +101,24 @@ std::vector<Line> TwoPass::first_pass() {
 			}
 			else if (Tables::directives.count(operation)) {
 				int directive_size;
-				std::tie(directive_size, ignore) = resolve_directive(line);
+				std::tie(directive_size, ignore) = Directives::resolve(line);
 				position_count += directive_size;
+
 				line.type = 2;
-				if(Tables::directives.at(line.operation).id > 2)
+				if(Tables::directives.at(line.operation).id > 2) {
 					code.push_back(line);
+				}
 			}
 			else {
 				error_list.push_back("Erro: Operação " + operation +
-					" não identificada na linha " + std::to_string(line_count));
+						" não identificada na linha " + std::to_string(line_count));
 			}
 		}
 
 		line_count++;
 	}
+
+	pre.open(pre_file);
 
 	for(Line line : code) {
 		if(!line.label.empty()) {
@@ -265,7 +137,7 @@ std::vector<Line> TwoPass::first_pass() {
 	}
 
 	pre.close();
-	for(std::pair<std::string, std::string> equ : equ_table) {
+	for(std::pair<std::string, std::string> equ : Tables::equ) {
 		Tables::symbols.erase(equ.first);
 	}
 
@@ -273,6 +145,8 @@ std::vector<Line> TwoPass::first_pass() {
 }
 
 void TwoPass::second_pass(std::vector<Line> code) {
+	obj.open(obj_file);
+
 	for (Line line : code) {
 		std::string operation = line.operation;
 		std::vector<std::string> operands = line.operands;
@@ -285,9 +159,6 @@ void TwoPass::second_pass(std::vector<Line> code) {
 						" operadores na linha " + std::to_string(line.original_line));
 			}
 
-			if(section != TEXT) {
-			}
-
 			obj << std::to_string(Tables::instructions.at(operation).op_code) << " ";
 
 			for (std::string operand : operands) {
@@ -296,7 +167,7 @@ void TwoPass::second_pass(std::vector<Line> code) {
 				}
 				catch(const std::exception& error) {
 					error_list.push_back("Erro: Símbolo não definido na linha " +
-						std::to_string(line.original_line));
+							std::to_string(line.original_line));
 				}
 			}
 		}

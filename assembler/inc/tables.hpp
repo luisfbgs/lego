@@ -49,6 +49,8 @@ namespace Tables {
 
 	extern std::map<std::string, uint16_t> symbols;
 
+	extern std::map<std::string, std::string> equ;
+
 } // end namespace Tables
 
 #endif

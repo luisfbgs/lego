@@ -34,4 +34,6 @@ namespace Tables{
 	};
 
 	std::map<std::string, uint16_t> symbols;
+	
+	std::map<std::string, std::string> equ;
 }
