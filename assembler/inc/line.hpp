@@ -44,7 +44,8 @@ struct Line {
             if (aux.back() == ',') {
                 aux.pop_back();
                 operands.push_back(aux);
-            }
+            	aux.clear();
+			}
         }
         if (!aux.empty()) {
             operands.push_back(aux);
