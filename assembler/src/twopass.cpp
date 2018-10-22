@@ -63,9 +63,16 @@ void TwoPass::store_label(Line line, int position_count) {
 
 void TwoPass::replace_equ(std::vector<std::string> &operands) {
 	for(std::string &operand : operands) {
-		if(Tables::equ.count(operand)) {
-			operand = Tables::equ[operand];
+		std::string new_operand;
+		for(std::string symbol : Helpers::split_invisible_semicolon(operand)) {
+			if(Tables::equ.count(symbol)) {
+				new_operand += Tables::equ[symbol];
+			}
+			else {
+				new_operand += symbol;
+			}
 		}
+		operand = new_operand;
 	}
 }
 
@@ -114,6 +121,10 @@ std::vector<Line> TwoPass::first_pass() {
 				error_list.push_back("Erro: Operação " + operation +
 						" não identificada na linha " + std::to_string(line_count));
 			}
+		}
+		else {
+			line.type = 0;
+			code.push_back(line);
 		}
 
 		line_count++;

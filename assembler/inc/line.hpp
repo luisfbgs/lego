@@ -46,6 +46,9 @@ struct Line {
                 operands.push_back(aux);
             	aux.clear();
 			}
+			else {
+				aux += ' ';
+			}
         }
         if (!aux.empty()) {
             operands.push_back(aux);
