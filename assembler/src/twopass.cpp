@@ -118,7 +118,7 @@ std::vector<Line> TwoPass::first_pass() {
 
 		line_count++;
 	}
-	
+
 	if(is_module && code.back().operation != "end") {
 		error_list.push_back("Erro: Módulos devem conter a diretiva END na última linha");
 	}
@@ -130,7 +130,7 @@ std::vector<Line> TwoPass::first_pass() {
 		}
 		public_labels.push_back({public_label, Tables::symbols[public_label]});
 	}
-	
+
 	if(error_list.empty()) {	
 		pre.open(pre_file);
 
@@ -176,9 +176,12 @@ void TwoPass::second_pass(std::vector<Line> code) {
 
 			for (std::string operand : operands) {
 				try { 
-					for(std::string symbol : Helpers::split(operand, ' ')) {
+					for(std::string symbol : Helpers::split_invisible_semicolon(operand)) {
 						if(Tables::use.count(symbol)) {
 							extern_use.push_back({symbol, obj_code.size()});
+						}
+						if(Tables::symbols.count(symbol)) {
+							relative_addresses.push_back(obj_code.size());
 						}
 					}
 					obj_code.push_back(Helpers::get_value(operand));
@@ -193,7 +196,7 @@ void TwoPass::second_pass(std::vector<Line> code) {
 			write_directive(line);
 		}
 	}
-	
+
 	if(error_list.empty()) {
 		obj.open(obj_file);
 
@@ -209,10 +212,17 @@ void TwoPass::second_pass(std::vector<Line> code) {
 				obj << public_label.first << " " << public_label.second << std::endl;
 			}
 			obj << std::endl;
-			
+
+			obj << "RELATIVE" << std::endl;
+			for(uint16_t relative_address : relative_addresses) {
+				obj << relative_address << " ";
+			}
+			obj << std::endl;
+			obj << std::endl;
+
 			obj << "CODE" << std::endl;
 		}
-	
+
 		for(uint16_t machine_code : obj_code) {
 			obj << machine_code << " ";
 		}

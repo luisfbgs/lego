@@ -27,6 +27,8 @@ class TwoPass {
 		std::vector<std::pair<std::string, uint16_t>> extern_use;
 
 		std::vector<std::pair<std::string, uint16_t>> public_labels;
+		
+		std::vector<uint16_t> relative_addresses;
  		
 		void write_directive(Line line);
 		
