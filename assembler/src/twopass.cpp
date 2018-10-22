@@ -13,6 +13,7 @@
 
 TwoPass::Sections TwoPass::section = TwoPass::NONE;
 std::vector<std::string> TwoPass::error_list;
+bool TwoPass::is_module = false;
 
 TwoPass::TwoPass(std::string source_file) {
 	input_file = source_file + ".asm";
@@ -27,20 +28,20 @@ void TwoPass::write_directive(Line line) {
 	switch(Tables::directives.at(operation).id) {
 		case 4: // SPACE
 			if(line.operands.empty()) {
-				obj << "0 ";
+				obj_code.push_back(0);
 			}
 			else {
 				for(int i = 0; i < std::stoi(line.operands[0]); i++) {
-					obj << "0 ";
+					obj_code.push_back(0);
 				}
 			}
 			break;
 		case 5: // CONST
 			if(Helpers::is_number(line.operands[0])) {
-				obj << std::stoi(line.operands[0]) << " ";
+				obj_code.push_back(std::stoi(line.operands[0]));
 			}
 			else {
-				obj << strtol(line.operands[0].c_str(), NULL, 16) << " ";
+				obj_code.push_back(strtol(line.operands[0].c_str(), NULL, 16));
 			}
 			break;
 	}
@@ -117,26 +118,32 @@ std::vector<Line> TwoPass::first_pass() {
 
 		line_count++;
 	}
-
-	pre.open(pre_file);
-
-	for(Line line : code) {
-		if(!line.label.empty()) {
-			pre << line.label << ": ";
-		}
-		if(!line.operation.empty()) {
-			pre << line.operation;
-		}
-		for(int i = 0; i < line.operands.size(); i++) {
-			if(i) {
-				pre << ",";
-			}
-			pre << " " << line.operands[i];
-		}
-		pre << std::endl;
+	
+	if(is_module && code.back().operation != "end") {
+		error_list.push_back("Erro: Módulos devem conter a diretiva END na última linha");
 	}
+	
+	if(error_list.empty()) {	
+		pre.open(pre_file);
 
-	pre.close();
+		for(Line line : code) {
+			if(!line.label.empty()) {
+				pre << line.label << ": ";
+			}
+			if(!line.operation.empty()) {
+				pre << line.operation;
+			}
+			for(int i = 0; i < line.operands.size(); i++) {
+				if(i) {
+					pre << ",";
+				}
+				pre << " " << line.operands[i];
+			}
+			pre << std::endl;
+		}
+
+		pre.close();
+	}
 	for(std::pair<std::string, std::string> equ : Tables::equ) {
 		Tables::symbols.erase(equ.first);
 	}
@@ -145,8 +152,6 @@ std::vector<Line> TwoPass::first_pass() {
 }
 
 void TwoPass::second_pass(std::vector<Line> code) {
-	obj.open(obj_file);
-
 	for (Line line : code) {
 		std::string operation = line.operation;
 		std::vector<std::string> operands = line.operands;
@@ -159,11 +164,16 @@ void TwoPass::second_pass(std::vector<Line> code) {
 						" operadores na linha " + std::to_string(line.original_line));
 			}
 
-			obj << std::to_string(Tables::instructions.at(operation).op_code) << " ";
+			obj_code.push_back(Tables::instructions.at(operation).op_code);
 
 			for (std::string operand : operands) {
 				try { 
-					obj << std::to_string(Helpers::get_value(operand)) << " ";
+					for(std::string symbol : Helpers::split(operand, ' ')) {
+						if(Tables::use.count(symbol)) {
+							extern_use.push_back({symbol, obj_code.size()});
+						}
+					}
+					obj_code.push_back(Helpers::get_value(operand));
 				}
 				catch(const std::exception& error) {
 					error_list.push_back("Erro: Símbolo não definido na linha " +
@@ -175,8 +185,25 @@ void TwoPass::second_pass(std::vector<Line> code) {
 			write_directive(line);
 		}
 	}
-	obj << std::endl;
-	obj.close();
+	
+	if(error_list.empty()) {
+		obj.open(obj_file);
+
+		if(is_module) {
+			obj << "TABLE USE" << std::endl;
+			for(std::pair<std::string, uint16_t> use : extern_use) {
+				obj << use.first << " " << use.second << std::endl;
+			}
+			obj << std::endl;
+			obj << "CODE" << std::endl;
+		}
+	
+		for(uint16_t machine_code : obj_code) {
+			obj << machine_code << " ";
+		}
+		obj << std::endl;
+		obj.close();
+	}
 
 	for(auto error : error_list) {
 		std::cout << error << std::endl; 

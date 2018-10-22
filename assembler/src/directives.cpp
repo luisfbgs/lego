@@ -107,6 +107,15 @@ void Directives::resolve_const(Line line) {
 	}
 }
 
+void Directives::resolve_extern(Line line) {
+	if(line.label.empty()) {
+		TwoPass::error_list.push_back("Erro: EXTERN sem label, linha " +
+				std::to_string(line.original_line));
+		return;
+	}
+	Tables::symbols[line.label] = 0;
+	Tables::use.insert(line.label);
+}
 
 std::pair<uint16_t, bool> Directives::resolve(Line line) {
 	std::string operation = line.operation;
@@ -124,6 +133,26 @@ std::pair<uint16_t, bool> Directives::resolve(Line line) {
 		case 5: // CONST
 			resolve_const(line);
 			return {1, false};
+		case 6: // PUBLIC
+			break;
+		case 7: // EXTERN
+			resolve_extern(line);
+			break;
+		case 8: // BEGIN
+			if(line.original_line != 1) {
+				TwoPass::error_list.push_back("Erro: BEGIN deve ser utilizado na linha 1" +
+						(" não na linha " + std::to_string(line.original_line)));
+			}
+			else {
+				TwoPass::is_module = true;
+			}
+			break;
+		case 9: // END
+			if(!TwoPass::is_module) {
+				TwoPass::error_list.push_back("Erro: END deve ser utilizado somente para " +
+						("indicar o fim de um módulo, linha " + std::to_string(line.original_line)));
+			}
+			break;
 	}
 	return {0, false};
 }

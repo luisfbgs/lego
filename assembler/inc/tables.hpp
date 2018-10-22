@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <map>
 
 namespace Tables {
@@ -50,6 +51,10 @@ namespace Tables {
 	extern std::map<std::string, uint16_t> symbols;
 
 	extern std::map<std::string, std::string> equ;
+
+	extern std::set<std::string> definition;
+
+	extern std::set<std::string> use;
 
 } // end namespace Tables
 

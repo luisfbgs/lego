@@ -21,6 +21,10 @@ class TwoPass {
 		std::ifstream source;
 		std::ofstream pre;
 		std::ofstream obj;
+
+		std::vector<uint16_t> obj_code;
+
+		std::vector<std::pair<std::string, uint16_t>> extern_use;
  		
 		void write_directive(Line line);
 		
@@ -36,6 +40,8 @@ class TwoPass {
 			DATA,
 			BSS
 		};
+
+		static bool is_module; 
 
 		static Sections section;
 

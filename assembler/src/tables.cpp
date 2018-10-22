@@ -1,5 +1,6 @@
 #include <map>
 #include <string>
+#include <set>
 #include "tables.hpp"
 
 namespace Tables{
@@ -36,4 +37,8 @@ namespace Tables{
 	std::map<std::string, uint16_t> symbols;
 	
 	std::map<std::string, std::string> equ;
+
+	std::set<std::string> definition;
+
+	std::set<std::string> use;
 }

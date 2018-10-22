@@ -20,6 +20,8 @@ namespace Directives {
 		void resolve_const(Line line);
 
 		void resolve_section(Line line);
+		
+		void resolve_extern(Line line);
 
 		// First element of the pair = size of directive
 		// Second element of the pair = true if the next line must be ignored
