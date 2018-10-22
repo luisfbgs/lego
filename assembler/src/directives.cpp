@@ -113,8 +113,27 @@ void Directives::resolve_extern(Line line) {
 				std::to_string(line.original_line));
 		return;
 	}
+	if(!TwoPass::is_module) {
+		TwoPass::error_list.push_back("Erro: EXTERN deve ser utilizada somente em módulos, linha " +
+				std::to_string(line.original_line));
+		return;
+	}
 	Tables::symbols[line.label] = 0;
 	Tables::use.insert(line.label);
+}
+
+void Directives::resolve_public(Line line) {
+	if(!TwoPass::is_module) {
+		TwoPass::error_list.push_back("Erro: PUBLIC deve ser utilizada somente em módulos, linha " +
+				std::to_string(line.original_line));
+		return;
+	}
+	if(line.operands.size() != 1) {
+		TwoPass::error_list.push_back("Erro: PUBLIC conter exatamente 1 operando, linha " +
+				std::to_string(line.original_line));
+		return;
+	}
+	Tables::definition.insert(line.operands[0]);
 }
 
 std::pair<uint16_t, bool> Directives::resolve(Line line) {
@@ -134,6 +153,7 @@ std::pair<uint16_t, bool> Directives::resolve(Line line) {
 			resolve_const(line);
 			return {1, false};
 		case 6: // PUBLIC
+			resolve_public(line);
 			break;
 		case 7: // EXTERN
 			resolve_extern(line);

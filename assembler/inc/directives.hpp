@@ -23,6 +23,8 @@ namespace Directives {
 		
 		void resolve_extern(Line line);
 
+		void resolve_public(Line line);
+
 		// First element of the pair = size of directive
 		// Second element of the pair = true if the next line must be ignored
 		std::pair<uint16_t, bool> resolve(Line line);

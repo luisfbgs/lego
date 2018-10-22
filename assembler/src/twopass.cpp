@@ -122,6 +122,14 @@ std::vector<Line> TwoPass::first_pass() {
 	if(is_module && code.back().operation != "end") {
 		error_list.push_back("Erro: Módulos devem conter a diretiva END na última linha");
 	}
+
+	for(std::string public_label : Tables::definition) {
+		if(!Tables::symbols.count(public_label)) {
+			error_list.push_back("Erro: Label publica " + public_label +
+					" não foi definida");
+		}
+		public_labels.push_back({public_label, Tables::symbols[public_label]});
+	}
 	
 	if(error_list.empty()) {	
 		pre.open(pre_file);
@@ -195,6 +203,13 @@ void TwoPass::second_pass(std::vector<Line> code) {
 				obj << use.first << " " << use.second << std::endl;
 			}
 			obj << std::endl;
+
+			obj << "TABLE DEFINITION" << std::endl;
+			for(std::pair<std::string, uint16_t> public_label : public_labels) {
+				obj << public_label.first << " " << public_label.second << std::endl;
+			}
+			obj << std::endl;
+			
 			obj << "CODE" << std::endl;
 		}
 	
