@@ -16,26 +16,26 @@ Module::Module(std::string filename) {
     std::vector<std::string> key_value;
     std::vector<std::string> values;
     while (getline(file, line)) {
-        if (line == "use_table") {
-            while (getline(file, line) && line != "===") {
+        if (line == "TABLE USE") {
+            while (getline(file, line) && !line.empty()) {
                 key_value = Helpers::split_invisible_semicolon(line);
                 use_table[key_value[0]].push_back(stoi(key_value[1]));
             }
         }
-        else if (line == "def_table") {
-            while (getline(file, line) && line != "===")  {
+        else if (line == "TABLE DEFINITION") {
+            while (getline(file, line) && !line.empty())  {
                 key_value = Helpers::split_invisible_semicolon(line);
                 definition_table[key_value[0]] = stoi(key_value[1]);
             }
         }
-        else if (line == "relatives") {
-            while (getline(file, line) && line != "===")  {
+        else if (line == "RELATIVE") {
+            while (getline(file, line) && !line.empty())  {
                 values = Helpers::split_invisible_semicolon(line);
                 for (auto s : values) relatives.push_back(stoi(s));
             }
         }
-        else if (line == "code") {
-            while (getline(file, line) && line != "===")  {
+        else if (line == "CODE") {
+            while (getline(file, line) && !line.empty())  {
                 values = Helpers::split_invisible_semicolon(line);
                 for (auto s : values) code.push_back(stoi(s));
             }
