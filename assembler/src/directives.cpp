@@ -5,6 +5,10 @@
 #include "twopass.hpp"
 #include "tables.hpp"
 
+bool section_text = false;
+bool section_bss = false;
+bool section_data = false;
+
 void Directives::resolve_section(Line line) {
 	if (line.operands.size() != 1) {
 		TwoPass::error_list.push_back("Erro: Operando SECTION na linha " + 
@@ -14,21 +18,42 @@ void Directives::resolve_section(Line line) {
 
 	bool error = true;
 	if (line.operands[0] == "TEXT") {
-		if (TwoPass::section == TwoPass::NONE) {
+		if (TwoPass::section == TwoPass::NONE && section_text == false) {
 			TwoPass::section = TwoPass::TEXT;
+			section_text = true;
 			error = false;
+		}
+		else if (section_text == true) {
+		TwoPass::error_list.push_back("Erro: Operando SECTION TEXT redefinido na linha " + 
+				std::to_string(line.original_line) + " as secoes devem ser: " + 
+				"TEXT, DATA ou BSS. Cada seção só pode ser definida uma vez e " +
+				"a seção TEXT deve vir antes da outras");			
 		}
 	}
 	else if (line.operands[0] == "DATA") {
-		if (TwoPass::section != TwoPass::NONE && TwoPass::section != TwoPass::DATA) {
+		if (TwoPass::section != TwoPass::NONE && TwoPass::section != TwoPass::DATA && section_data == false) {
 			TwoPass::section = TwoPass::DATA;
+			section_data = true;
 			error = false;
+		}
+		else if (section_data == true) {
+		TwoPass::error_list.push_back("Erro: Operando SECTION DATA redefinido na linha " + 
+				std::to_string(line.original_line) + " as secoes devem ser: " + 
+				"TEXT, DATA ou BSS. Cada seção só pode ser definida uma vez e " +
+				"a seção TEXT deve vir antes da outras");			
 		}
 	}
 	else if (line.operands[0] == "BSS") {
-		if (TwoPass::section != TwoPass::NONE && TwoPass::section != TwoPass::BSS) {
+		if (TwoPass::section != TwoPass::NONE && TwoPass::section != TwoPass::BSS && section_bss == false) {
 			TwoPass::section = TwoPass::BSS;
+			section_bss = true;
 			error = false;
+		}
+		else if (section_bss == true) {
+		TwoPass::error_list.push_back("Erro: Operando SECTION BSS redefinido na linha " + 
+				std::to_string(line.original_line) + " as secoes devem ser: " + 
+				"TEXT, DATA ou BSS. Cada seção só pode ser definida uma vez e " +
+				"a seção TEXT deve vir antes da outras");			
 		}
 	}
 
