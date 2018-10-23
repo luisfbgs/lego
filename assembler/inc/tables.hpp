@@ -56,6 +56,10 @@ namespace Tables {
 
 	extern std::set<std::string> use;
 
+	extern std::set<uint16_t> can_read;
+
+	extern std::set<uint16_t> can_write;
+
 } // end namespace Tables
 
 #endif

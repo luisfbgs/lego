@@ -11,7 +11,7 @@
 #include "helpers.hpp"
 
 struct Line {
-    Line(std::string line, uint32_t original_line) : original_line(original_line) {
+    Line(std::string line, uint32_t original_line, uint16_t original_pos) : original_line(original_line), original_pos(original_pos) {
         // split the line based on spaces
         // only add strings that are not empty
         std::vector<std::string> elements = Helpers::split_invisible_semicolon(line);
@@ -71,6 +71,8 @@ struct Line {
 	uint8_t type;
 
     uint32_t original_line;
+
+	uint16_t original_pos;
 };
 
 #endif

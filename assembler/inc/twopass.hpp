@@ -29,12 +29,20 @@ class TwoPass {
 		std::vector<std::pair<std::string, uint16_t>> public_labels;
 		
 		std::vector<uint16_t> relative_addresses;
+
+		// First position that can be jumped to
+		int first_jump;
+
+		// Last position that can be jumped to
+		int last_jump;
  		
 		void write_directive(Line line);
 		
 		void store_label(Line line, int position_count);
 
 		void replace_equ(std::vector<std::string> &operands);
+		
+		void check_mem_access(Line line);
 
 	public:
 

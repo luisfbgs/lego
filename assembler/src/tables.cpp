@@ -41,4 +41,8 @@ namespace Tables{
 	std::set<std::string> definition;
 
 	std::set<std::string> use;
+
+	std::set<uint16_t> can_read;
+	
+	std::set<uint16_t> can_write;
 }

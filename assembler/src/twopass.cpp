@@ -21,6 +21,44 @@ TwoPass::TwoPass(std::string source_file) {
 	obj_file   = source_file + ".obj";
 
 	source.open(input_file);
+	first_jump = last_jump = -1;
+}
+
+void TwoPass::check_mem_access(Line line) {
+	/*
+	if (line.operation == "load") {
+		if (!Tables::can_read.count(Helpers::get_value(line.operands[0]))) {
+			error_list.push_back("Erro: LOAD na linha " + std::to_string(line.original_line) +
+					" não tem permissão para ler do endereço especificado");
+			std::cout << Helpers::get_value(line.operands[0]) << std::endl;
+		}
+	}
+	else if (line.operation == "input") {
+		if (!Tables::can_write.count(Helpers::get_value(line.operands[0]))) {
+			error_list.push_back("Erro: INPUT na linha " + std::to_string(line.original_line) +
+					" não tem permissão para escrever no endereço especificado");
+		}
+	}
+	else if (line.operation == "copy") {
+		if (!Tables::can_write.count(Helpers::get_value(line.operands[1]))) {
+			error_list.push_back("Erro: COPY na linha " + std::to_string(line.original_line) +
+					" não tem permissão para escrever no endereço especificado");
+		}
+		if (!Tables::can_read.count(Helpers::get_value(line.operands[0]))) {
+			error_list.push_back("Erro: COPY na linha " + std::to_string(line.original_line) +
+					" não tem permissão para ler do endereço especificado");
+		}
+	}
+	else if (line.operation == "jmpz") {
+		uint16_t jmp_address = Helpers::get_value(line.operands[0]);
+		if (jmp_address < first_jump || jmp_address > last_jump) {
+			error_list.push_back("Erro: JMPZ na linha " + std::to_string(line.original_line) +
+					" não tem permissão para pular para o endereço especificado");
+			std::cout << line.operands[0] << std::endl;
+			std::cout << "F " << int(first_jump) << " " << int(last_jump) << std::endl;
+		}
+	}
+	*/
 }
 
 void TwoPass::write_directive(Line line) {
@@ -90,7 +128,7 @@ std::vector<Line> TwoPass::first_pass() {
 			continue;
 		}
 
-		Line line(raw_line, line_count);
+		Line line(raw_line, line_count, position_count);
 
 		if (line.additional_labels != "") {
 			error_list.push_back("Erro: Dois ou mais rótulos na linha " + std::to_string(line.original_line));
@@ -116,6 +154,10 @@ std::vector<Line> TwoPass::first_pass() {
 				std::tie(directive_size, ignore) = Directives::resolve(line);
 				position_count += directive_size;
 
+				if (section == TEXT && first_jump == -1) {
+					first_jump = position_count;
+				}
+
 				line.type = 2;
 				if (Tables::directives.at(line.operation).id > 2) {
 					code.push_back(line);
@@ -129,6 +171,10 @@ std::vector<Line> TwoPass::first_pass() {
 		else {
 			line.type = 0;
 			code.push_back(line);
+		}
+
+		if (section == TEXT) {
+			last_jump = position_count;
 		}
 
 		line_count++;
@@ -189,8 +235,11 @@ void TwoPass::second_pass(std::vector<Line> code) {
 						std::to_string(Tables::instructions.at(operation).operands) +
 						" operadores mas foram providdos " + std::to_string(operands.size()) +
 						" operadores na linha " + std::to_string(line.original_line));
+				continue;
 			}
-
+			
+			bool valid_operands = true;;
+			
 			obj_code.push_back(Tables::instructions.at(operation).op_code);
 
 			for (std::string operand : operands) {
@@ -208,8 +257,11 @@ void TwoPass::second_pass(std::vector<Line> code) {
 				catch (const std::exception& error) {
 					error_list.push_back("Erro: Símbolo não definido na linha " +
 							std::to_string(line.original_line));
+					valid_operands = false;
 				}
 			}
+
+			TwoPass::check_mem_access(line);
 		}
 		else if (line.type == 2) {
 			write_directive(line);

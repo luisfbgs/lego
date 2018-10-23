@@ -85,11 +85,16 @@ uint16_t Directives::resolve_space(Line line) {
 		return 0;
 	}
 	else {
+		uint16_t reserved_mem;
 		if (operands.empty()) {
-			return 1;
+			reserved_mem = 1;
 		}
 		else {
-			return std::stoi(operands[0]);
+			reserved_mem = stoi(operands[0]);
+		}
+		for (int i = 0; i < reserved_mem; i++) {
+			Tables::can_read.insert(line.original_pos + i);
+			Tables::can_write.insert(line.original_pos + i);
 		}
 	}
 }
@@ -104,7 +109,9 @@ void Directives::resolve_const(Line line) {
 	if (operands.size() != 1 || (operands.size() && !Helpers::is_number(operands[0]) && !Helpers::is_hex(operands[0]))) {
 		TwoPass::error_list.push_back("Erro: Operando CONST na linha " + 
 				std::to_string(line.original_line));
+		return;
 	}
+	Tables::can_read.insert(line.original_pos);
 }
 
 void Directives::resolve_extern(Line line) {
