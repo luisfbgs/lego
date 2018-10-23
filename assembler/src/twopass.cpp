@@ -13,6 +13,7 @@
 
 TwoPass::Sections TwoPass::section = TwoPass::NONE;
 std::vector<std::string> TwoPass::error_list;
+std::set<std::string> divs;
 bool TwoPass::is_module = false;
 
 TwoPass::TwoPass(std::string source_file) {
@@ -78,6 +79,10 @@ void TwoPass::write_directive(Line line) {
 			}
 			else {
 				obj_code.push_back(strtol(line.operands[0].c_str(), NULL, 16));
+			}
+
+			if (obj_code.back() == 0 && divs.count(line.label)) {
+				error_list.push_back("Erro: CONST 0 usado em divisao com label " + line.label);				
 			}
 			break;
 	}
@@ -251,6 +256,10 @@ void TwoPass::second_pass(std::vector<Line> code) {
 						" operadores mas foram providdos " + std::to_string(operands.size()) +
 						" operadores na linha " + std::to_string(line.original_line));
 				continue;
+			}
+
+			if (operation == "div") {
+				divs.insert(operands[0]);
 			}
 			
 			bool valid_operands = true;;
