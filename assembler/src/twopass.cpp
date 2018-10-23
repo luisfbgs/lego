@@ -134,6 +134,23 @@ std::vector<Line> TwoPass::first_pass() {
 			error_list.push_back("Erro: Dois ou mais rótulos na linha " + std::to_string(line.original_line));
 		}
 
+		while (line.operation.empty()) {
+			if (!getline(source, raw_line)) {
+				break;
+			}
+			line_count++;
+			Line line2(raw_line, line_count);
+			if (!line2.label.empty()) {
+				TwoPass::store_label(line, position_count);
+				line = line2;
+				continue;
+			}
+
+			line2.label = line.label;
+			line = line2;
+		}
+
+		
 		TwoPass::store_label(line, position_count);
 
 		TwoPass::replace_equ(line.operands);

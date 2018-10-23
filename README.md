@@ -8,10 +8,19 @@ Montador e ligador de uma linguagem assembler simplificada. Desenvolvido para a 
  * Luis Felipe
  * Mikael Mello
 
-## Building
+## Como usar
+Para executar o montador, mude o diretório para `assembler/` e execute `make` para compilar
 
 ```bash
-$ git clone https://github.com/luisfbgs/lego.git
-$ cd lego
+$ cd assembler
 $ make
+$ ./montador <nome do arquivo>
+```
+
+Para ligar arquivos objetos, mude o diretório para `linker/` e execute `make` para compilar
+
+```bash
+$ cd linker
+$ make
+$ ./ligador <arquivo1> [<arquivo2>] [<arquivo3>] [<arquivo4>]
 ```
