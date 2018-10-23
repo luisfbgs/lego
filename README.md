@@ -16,3 +16,11 @@ $ cd assembler
 $ make
 $ ./montador <nome do arquivo>
 ```
+
+Para ligar arquivos objetos, mude o diretório para `linker/` e execute `make` para compilar
+
+```bash
+$ cd linker
+$ make
+$ ./ligador <arquivo1> [<arquivo2>] [<arquivo3>] [<arquivo4>]
+```
