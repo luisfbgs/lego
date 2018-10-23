@@ -5,8 +5,8 @@ Montador e ligador de uma linguagem assembler simplificada. Desenvolvido para a 
 ---
 
 ## Membros
- * Luis Felipe
- * Mikael Mello
+ * Luis Felipe 16/0071569
+ * Mikael Mello 16/0015537
 
 ## Como usar
 Para executar o montador, mude o diretório para `assembler/` e execute `make` para compilar
