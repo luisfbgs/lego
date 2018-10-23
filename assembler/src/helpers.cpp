@@ -43,12 +43,12 @@ namespace Helpers{
 	}
 
 	bool is_number(std::string &s) {
-		if(!std::isdigit(s[0]) && s[0] != '-' && s[0] != '+') {
+		if (!std::isdigit(s[0]) && s[0] != '-' && s[0] != '+') {
 			return false;
 		}
 
-		for(int i = 1; i < s.size(); i++) {
-			if(!std::isdigit(s[i])) {
+		for (int i = 1; i < s.size(); i++) {
+			if (!std::isdigit(s[i])) {
 				return false;
 			}
 		}
@@ -60,12 +60,12 @@ namespace Helpers{
 	}
 
 	bool is_hex(std::string &s) {
-		if(s.size() < 2 || s[0] != '0' || s[1] != 'x') {
+		if (s.size() < 2 || s[0] != '0' || s[1] != 'x') {
 			return false;
 		}
 
-		for(int i = 2; i < s.size(); i++) {
-			if(!std::isdigit(s[i]) && !hexdigit(s[i])) {
+		for (int i = 2; i < s.size(); i++) {
+			if (!std::isdigit(s[i]) && !hexdigit(s[i])) {
 				return false;
 			}
 		}
@@ -83,15 +83,15 @@ namespace Helpers{
 				aux += operand[pos++];
 			}
 
-			if(Helpers::is_number(aux)){
+			if (Helpers::is_number(aux)){
 				value += sign *  std::stoi(aux);
 			}
-			else{
+			else {
 				value += sign * Tables::symbols.at(aux);
 			}
 
 			aux = "";
-			if(pos < operand.size()) {
+			if (pos < operand.size()) {
 				sign = operand[pos++] == '+' ? 1 : -1;
 			}
 		}
