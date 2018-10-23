@@ -130,6 +130,10 @@ std::vector<Line> TwoPass::first_pass() {
 		line_count++;
 	}
 
+	if (section == NONE) {
+		error_list.push_back("Erro: Seção TEXT faltante");
+	}
+
 	if(is_module && code.back().operation != "end") {
 		error_list.push_back("Erro: Módulos devem conter a diretiva END na última linha");
 	}
