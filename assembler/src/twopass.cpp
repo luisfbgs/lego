@@ -92,6 +92,10 @@ std::vector<Line> TwoPass::first_pass() {
 
 		Line line(raw_line, line_count);
 
+		if (line.additional_labels != "") {
+			error_list.push_back("Erro: Dois ou mais rótulos na linha " + std::to_string(line.original_line));
+		}
+
 		TwoPass::store_label(line, position_count);
 
 		TwoPass::replace_equ(line.operands);

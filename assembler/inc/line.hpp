@@ -21,9 +21,14 @@ struct Line {
 
         // set label
         int pos = 0;
-        if (elements[pos].back() == ':') {
-            label = elements[pos];
-			label.pop_back();
+        while (elements.size() > pos && elements[pos].back() == ':') {
+            if (pos > 0) {
+                additional_labels += elements[pos];
+            }
+            else {
+                label = elements[pos];
+                label.pop_back();
+            }
             pos += 1;
         }
 
@@ -56,6 +61,8 @@ struct Line {
     }
 
     std::string label;
+
+    std::string additional_labels = "";
 
     std::string operation;
 
