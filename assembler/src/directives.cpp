@@ -121,6 +121,7 @@ uint16_t Directives::resolve_space(Line line) {
 			Tables::can_read.insert(line.original_pos + i);
 			Tables::can_write.insert(line.original_pos + i);
 		}
+		return reserved_mem;
 	}
 }
 

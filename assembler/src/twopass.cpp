@@ -25,7 +25,6 @@ TwoPass::TwoPass(std::string source_file) {
 }
 
 void TwoPass::check_mem_access(Line line) {
-	/*
 	if (line.operation == "load") {
 		if (!Tables::can_read.count(Helpers::get_value(line.operands[0]))) {
 			error_list.push_back("Erro: LOAD na linha " + std::to_string(line.original_line) +
@@ -58,7 +57,6 @@ void TwoPass::check_mem_access(Line line) {
 			std::cout << "F " << int(first_jump) << " " << int(last_jump) << std::endl;
 		}
 	}
-	*/
 }
 
 void TwoPass::write_directive(Line line) {
@@ -139,7 +137,7 @@ std::vector<Line> TwoPass::first_pass() {
 				break;
 			}
 			line_count++;
-			Line line2(raw_line, line_count);
+			Line line2(raw_line, line_count, position_count);
 			if (!line2.label.empty()) {
 				TwoPass::store_label(line, position_count);
 				line = line2;
@@ -167,7 +165,7 @@ std::vector<Line> TwoPass::first_pass() {
 				code.push_back(line);
 			}
 			else if (Tables::directives.count(operation)) {
-				int directive_size;
+				uint16_t directive_size;
 				std::tie(directive_size, ignore) = Directives::resolve(line);
 				position_count += directive_size;
 
