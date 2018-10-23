@@ -139,7 +139,7 @@ std::vector<Line> TwoPass::first_pass() {
 				break;
 			}
 			line_count++;
-			Line line2(raw_line, line_count);
+			Line line2(raw_line, line_count, position_count);
 			if (!line2.label.empty()) {
 				TwoPass::store_label(line, position_count);
 				line = line2;
