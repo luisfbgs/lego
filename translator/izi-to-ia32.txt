@@ -1,0 +1,32 @@
+Izi
+ADD OP
+ACC <- ACC + MEM[OP]
+
+IA32
+push EAX
+mov EAX, [ACC]
+add EAX, [OP]
+mov [ACC], EAX
+pop EAX
+
+Izi
+SUB OP
+ACC <- ACC - MEM[OP]
+
+IA32
+push EAX
+mov EAX, [ACC]
+sub EAX, [OP]
+mov [ACC], EAX
+pop EAX
+
+Izi
+MULT OP
+ACC <- ACC * MEM[OB]
+
+IA32
+push EAX
+mov EAX, [ACC]
+imul EAX, [OP]
+mov [ACC], EAX
+pop EAX
