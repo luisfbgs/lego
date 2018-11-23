@@ -3,11 +3,9 @@ ADD OP
 ACC <- ACC + MEM[OP]
 
 IA32
-push eax
 mov eax, [ACC]
 add eax, [OP]
 mov [ACC], eax
-pop eax
 -----------------------
 
 Izi
@@ -15,11 +13,9 @@ SUB OP
 ACC <- ACC - MEM[OP]
 
 IA32
-push eax
 mov eax, [ACC]
 sub eax, [OP]
 mov [ACC], eax
-pop eax
 -----------------------
 
 Izi
@@ -27,14 +23,10 @@ MULT OP
 ACC <- ACC * MEM[OP]
 
 IA32
-push eax
-push edx
 mov eax, [ACC]
 mov edx, [OP]
 imul edx
 mov [ACC], eax
-pop edx
-pop eax
 -----------------------
 
 Izi
@@ -42,15 +34,49 @@ DIV OP
 ACC <- ACC / MEM[OP]
 
 IA32
-push eax
-push edx
-push ecx
 mov eax, [ACC]
 cdq
 mov ecx, [OP]
 idiv ecx
 mov [ACC], eax
-pop ecx
-pop edx
-pop eax
+-----------------------
+
+Izi
+JMP OP
+PC <- OP
+
+IA32
+jmp [OP]
+-----------------------
+
+Izi
+JMPN
+If ACC < 0, PC <- OP
+
+IA32
+mov eax, [ACC]
+comp eax, 0
+jl OP
+-----------------------
+
+Izi
+JMPP
+If ACC > 0, PC <- OP
+
+IA32
+mov eax, [ACC]
+comp eax, 0
+jg OP
+
+-----------------------
+
+Izi
+JMPZ
+If ACC == 0, PC <- OP
+
+IA32
+mov eax, [ACC]
+comp eax, 0
+je OP
+
 -----------------------
