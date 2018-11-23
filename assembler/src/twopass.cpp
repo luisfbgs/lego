@@ -54,8 +54,6 @@ void TwoPass::check_mem_access(Line line) {
 		if (jmp_address < first_jump || jmp_address > last_jump) {
 			error_list.push_back("Erro: JMPZ na linha " + std::to_string(line.original_line) +
 					" não tem permissão para pular para o endereço especificado");
-			std::cout << line.operands[0] << std::endl;
-			std::cout << "F " << int(first_jump) << " " << int(last_jump) << std::endl;
 		}
 	}
 }

@@ -99,7 +99,7 @@ void Directives::resolve_equ(Line line) {
 
 uint16_t Directives::resolve_space(Line line) {
 	if (TwoPass::section != TwoPass::BSS) {
-		TwoPass::error_list.push_back("Erro: CONST deve estar na seção TwoPass::BSS, na linha " +
+		TwoPass::error_list.push_back("Erro: SPACE deve estar na seção BSS, na linha " +
 				std::to_string(line.original_line));
 		return 0;
 	}
