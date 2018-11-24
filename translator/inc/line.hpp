@@ -56,6 +56,7 @@ struct Line {
 			}
         }
         if (!aux.empty()) {
+            aux.pop_back();
             operands.push_back(aux);
         }
     }
