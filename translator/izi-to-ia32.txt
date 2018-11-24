@@ -50,7 +50,7 @@ jmp [OP]
 -----------------------
 
 Izi
-JMPN
+JMPN OP
 If ACC < 0, PC <- OP
 
 IA32
@@ -60,23 +60,48 @@ jl OP
 -----------------------
 
 Izi
-JMPP
+JMPP OP
 If ACC > 0, PC <- OP
 
 IA32
 mov eax, [ACC]
 comp eax, 0
 jg OP
-
 -----------------------
 
 Izi
-JMPZ
+JMPZ OP
 If ACC == 0, PC <- OP
 
 IA32
 mov eax, [ACC]
 comp eax, 0
 je OP
+-----------------------
 
+Izi
+COPY OP1  OP2
+MEM[OP2] <- MEM[OP1]
+
+IA32
+mov eax, [OP1]
+mov [OP2], eax
+-----------------------
+
+Izi
+LOAD OP
+ACC <- MEM[OP]
+
+IA32
+mov eax, [OP]
+mov [ACC], eax
+-----------------------
+
+Izi
+STORE OP
+MEM[OP] <- ACC
+
+IA32
+mov eax, [ACC]
+mov [OP], eax
 -----------------------
