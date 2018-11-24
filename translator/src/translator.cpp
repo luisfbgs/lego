@@ -88,6 +88,12 @@ void convert_const (std::string operand, std::vector<std::string> &ia32) {
     ia32.push_back("dd " + operand);
 }
 
+void convert_stop (std::vector<std::string> &ia32) {
+    ia32.push_back("mov eax, 1");
+    ia32.push_back("mov ebx, 0");
+    ia32.push_back("int 80h");
+}
+
 std::vector<std::string> Translator::izi_to_ia32 (Line izi_line) {
     std::vector<std::string> ia32;
 
@@ -143,6 +149,9 @@ std::vector<std::string> Translator::izi_to_ia32 (Line izi_line) {
     }
     else if (operation == "const") {
         convert_const(operands[0], ia32);
+    }
+    else if (operation == "stop") {
+        convert_stop(ia32);
     }
     return ia32;
 }
