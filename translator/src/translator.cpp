@@ -97,10 +97,6 @@ void convert_stop (std::vector<std::string> &ia32) {
 std::vector<std::string> Translator::izi_to_ia32 (Line izi_line) {
     std::vector<std::string> ia32;
 
-    if (!izi_line.label.empty()) {
-        ia32.push_back(izi_line.label + ": ");
-    }
-
     std::string operation = izi_line.operation;
     std::vector<std::string> operands = izi_line.operands;
     if (operation == "add") {
@@ -153,6 +149,16 @@ std::vector<std::string> Translator::izi_to_ia32 (Line izi_line) {
     else if (operation == "stop") {
         convert_stop(ia32);
     }
+
+    if (!izi_line.label.empty()) {
+        if (ia32.empty()) {
+            ia32.push_back(izi_line.label + ": ");
+        }
+        else {
+            ia32[0] = izi_line.label + ": " + ia32[0];
+        }
+    }
+
     return ia32;
 }
 
