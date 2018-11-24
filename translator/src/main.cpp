@@ -10,12 +10,9 @@ int main(int argc, const char *argv[]) {
 
     Translator algo(argv[1]);
 
-    std::vector<Line> v = algo.pre_process();
-    for (auto i : v){
-        std::cout << i.label << " " << i.operation;
-        for (auto operand : i.operands) {
-            std::cout << " " << operand;
-        }
-        std::cout << std::endl;
+    std::vector<std::string> ia32_code = algo.translate(algo.pre_process());
+
+    for (auto i : ia32_code){
+        std::cout << i << std::endl;
     }
 }

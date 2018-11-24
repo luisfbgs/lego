@@ -19,11 +19,15 @@ class Translator {
 
         std::ifstream source;
 
+        std::vector<std::string> izi_to_ia32(Line line);
+
     public:
 
         Translator(std::string source_file);
 
         std::vector<Line> pre_process();
+
+        std::vector<std::string> translate(std::vector<Line> code);
 };
 
 #endif
