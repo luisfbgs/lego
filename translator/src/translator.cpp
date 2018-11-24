@@ -77,6 +77,7 @@ void convert_store (std::string operand, std::vector<std::string> &ia32) {
 }
 
 void convert_section (std::string operand, std::vector<std::string> &ia32) {
+    std::transform(operand.begin(), operand.end(), operand.begin(), ::tolower);
     ia32.push_back("section ." + operand);
 }
 
