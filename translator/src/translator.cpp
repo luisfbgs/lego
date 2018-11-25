@@ -13,30 +13,22 @@ Translator::Translator (std::string source_file) {
 }
 
 void convert_add (std::string operand, std::vector<std::string> &ia32) {
-    ia32.push_back("mov eax, [ACC]");
-    ia32.push_back("add edx, ["+ operand + "]");
-    ia32.push_back("mov [ACC], eax");
+    ia32.push_back("add eax, ["+ operand + "]");
 }
 
 void convert_sub (std::string operand, std::vector<std::string> &ia32) {
-    ia32.push_back("mov eax, [ACC]");
-    ia32.push_back("sub edx, ["+ operand + "]");
-    ia32.push_back("mov [ACC], eax");
+    ia32.push_back("sub eax, ["+ operand + "]");
 }
 
 void convert_mult (std::string operand, std::vector<std::string> &ia32) {
-    ia32.push_back("mov eax, [ACC]");
     ia32.push_back("mov edx, ["+ operand + "]");
     ia32.push_back("imul edx");
-    ia32.push_back("mov [ACC], eax");
 }
 
 void convert_div (std::string operand, std::vector<std::string> &ia32) {
-    ia32.push_back("mov eax, [ACC]");
     ia32.push_back("cdq");
     ia32.push_back("mov ecx, [" + operand + "]");
     ia32.push_back("idiv ecx");
-    ia32.push_back("mov [ACC], eax");
 }
 
 void convert_jmp (std::string operand, std::vector<std::string> &ia32) {
@@ -44,35 +36,30 @@ void convert_jmp (std::string operand, std::vector<std::string> &ia32) {
 }
 
 void convert_jmpn (std::string operand, std::vector<std::string> &ia32) {
-    ia32.push_back("mov eax, [ACC]");
     ia32.push_back("comp eax, 0");
     ia32.push_back("jl " + operand);
 }
 
 void convert_jmpp (std::string operand, std::vector<std::string> &ia32) {
-    ia32.push_back("mov eax, [ACC]");
     ia32.push_back("comp eax, 0");
     ia32.push_back("jg " + operand);
 }
 
 void convert_jmpz (std::string operand, std::vector<std::string> &ia32) {
-    ia32.push_back("mov eax, [ACC]");
     ia32.push_back("comp eax, 0");
     ia32.push_back("je " + operand);
 }
 
 void convert_copy (std::string operand1, std::string operand2, std::vector<std::string> &ia32) {
-    ia32.push_back("mov eax, [" + operand1 + "]");
-    ia32.push_back("mov [" + operand2 + "], eax");
+    ia32.push_back("mov ebx, [" + operand1 + "]");
+    ia32.push_back("mov [" + operand2 + "], ebx");
 }
 
 void convert_load (std::string operand, std::vector<std::string> &ia32) {
     ia32.push_back("mov eax, [" + operand + "]");
-    ia32.push_back("mov [ACC], eax");
 }
 
 void convert_store (std::string operand, std::vector<std::string> &ia32) {
-    ia32.push_back("mov eax, [ACC]");
     ia32.push_back("mov [" + operand + "], eax");
 }
 
