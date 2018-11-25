@@ -15,9 +15,10 @@ class Translator {
     private:
 
         std::string input_file;
-        std::string obj_file;
+        std::string ia32_file;
 
         std::ifstream source;
+        std::ofstream out;
 
         std::vector<std::string> izi_to_ia32(Line line);
 
@@ -27,7 +28,7 @@ class Translator {
 
         std::vector<Line> pre_process();
 
-        std::vector<std::string> translate(std::vector<Line> code);
+        void translate(std::vector<Line> code);
 };
 
 #endif

@@ -10,9 +10,5 @@ int main(int argc, const char *argv[]) {
 
     Translator algo(argv[1]);
 
-    std::vector<std::string> ia32_code = algo.translate(algo.pre_process());
-
-    for (auto i : ia32_code){
-        std::cout << i << std::endl;
-    }
+    algo.translate(algo.pre_process());
 }

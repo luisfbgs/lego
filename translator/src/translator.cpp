@@ -8,6 +8,7 @@
 
 Translator::Translator (std::string source_file) {
     input_file = source_file + ".asm";
+    ia32_file  = source_file + ".s";
 
     source.open(input_file);
 }
@@ -162,7 +163,7 @@ std::vector<Line> Translator::pre_process () {
     return code;
 }
 
-std::vector<std::string> Translator::translate (std::vector<Line> code) {
+void Translator::translate (std::vector<Line> code) {
     std::vector<std::string> ia32_code;
     
     bool set_start = true;
@@ -178,5 +179,9 @@ std::vector<std::string> Translator::translate (std::vector<Line> code) {
         }
     }
 
-    return ia32_code;
+    out.open(ia32_file);
+
+    for (std::string ia32_line : ia32_code) {
+        out << ia32_line << std::endl;
+    }
 }
