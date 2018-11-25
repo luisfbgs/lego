@@ -164,9 +164,14 @@ std::vector<Line> Translator::pre_process () {
 
 std::vector<std::string> Translator::translate (std::vector<Line> code) {
     std::vector<std::string> ia32_code;
-
+    
+    bool set_start = true;
     for (Line izi_line : code) {
-
+        if (set_start && izi_line.operation == "section" && izi_line.operands[0] == "TEXT") {
+            ia32_code.push_back("global _start");
+            ia32_code.push_back("_start:");
+            set_start = false;
+        }
         std::vector<std::string> ia32 = izi_to_ia32(izi_line);
         for (std::string ia32_line : ia32) {
             ia32_code.push_back(ia32_line);
