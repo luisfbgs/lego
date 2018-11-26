@@ -168,16 +168,16 @@ std::vector<std::string> Translator::izi_to_ia32 (Line izi_line) {
     else if (operation == "stop") {
         convert_stop(ia32);
     }
-    else if (operation == "input_c") {
+    else if (operation == "c_input") {
         convert_in_c(operands[0], ia32);
     }
-    else if (operation == "output_c") {
+    else if (operation == "c_output") {
         convert_out_c(operands[0], ia32);
     }
-    else if (operation == "input_s") {
+    else if (operation == "s_input") {
         convert_in_s(operands[0], operands[1], ia32);
     }
-    else if (operation == "output_s") {
+    else if (operation == "s_output") {
         convert_out_s(operands[0], operands[1], ia32);
     }
 
