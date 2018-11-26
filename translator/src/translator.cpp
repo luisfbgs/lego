@@ -83,8 +83,9 @@ void convert_stop (std::vector<std::string> &ia32) {
     ia32.push_back("int 80h");
 }
 
-void convert_in_out_c (int type, std::string operand, std::vector<std::string> &ia32) {
+void convert_in_out (int type, int size, std::string operand, std::vector<std::string> &ia32) {
     ia32.push_back("push eax");
+    ia32.push_back("push " + std::to_string(size));
     ia32.push_back("push " + std::to_string(type + 2));
     ia32.push_back("push " + operand);
     ia32.push_back("call _in_out_c");
@@ -147,10 +148,16 @@ std::vector<std::string> Translator::izi_to_ia32 (Line izi_line) {
         convert_stop(ia32);
     }
     else if (operation == "input_c") {
-        convert_in_out_c(1, operands[0], ia32);
+        convert_in_out(1, 1, operands[0], ia32);
     }
     else if (operation == "output_c") {
-        convert_in_out_c(2, operands[0], ia32);
+        convert_in_out(2, 1, operands[0], ia32);
+    }
+    else if (operation == "input_s") {
+        convert_in_out(1, stoi(operands[1]), operands[0], ia32);
+    }
+    else if (operation == "output_s") {
+        convert_in_out(2, stoi(operands[1]), operands[0], ia32);
     }
 
     if (!izi_line.label.empty()) {
@@ -177,11 +184,11 @@ std::vector<Line> Translator::pre_process () {
     return code;
 }
 
-void proc_in_out_c (std::vector<std::string> &ia32_code) {
+void proc_in_out (std::vector<std::string> &ia32_code) {
     ia32_code.push_back("_in_out_c: mov eax, [ESP+8]");
     ia32_code.push_back("mov ebx, 1");
     ia32_code.push_back("mov ecx, [ESP+4]");
-    ia32_code.push_back("mov edx, 1");
+    ia32_code.push_back("mov edx, [ESP+12]");
     ia32_code.push_back("int 80h");
     ia32_code.push_back("ret"); 
 }
@@ -203,7 +210,7 @@ void Translator::translate (std::vector<Line> code) {
     }
 
     ia32_code.push_back("section .text");
-    proc_in_out_c(ia32_code);
+    proc_in_out(ia32_code);
 
     out.open(ia32_file);
 
