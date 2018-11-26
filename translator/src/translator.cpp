@@ -224,12 +224,28 @@ void proc_out_c (std::vector<std::string> &ia32_code) {
 }
 
 void proc_in_s (std::vector<std::string> &ia32_code) {
-    ia32_code.push_back("LeerString:    mov eax, 3");
-    ia32_code.push_back("    mov ebx, 1");
+    ia32_code.push_back("LeerString:");
     ia32_code.push_back("    mov ecx, [ESP+4]");
     ia32_code.push_back("    mov edx, [ESP+8]");
-    ia32_code.push_back("    int 80h");
-    ia32_code.push_back("    ret 8"); 
+    ia32_code.push_back("    mov eax, 0");
+    ia32_code.push_back("LoopLeerString:");
+    ia32_code.push_back("    cmp edx, 0");
+    ia32_code.push_back("    jle SaiLeerString");
+    ia32_code.push_back("    dec edx");
+    ia32_code.push_back("    inc eax");
+    ia32_code.push_back("    push eax");
+    ia32_code.push_back("    push ecx");
+    ia32_code.push_back("    push edx");
+    ia32_code.push_back("    push ecx");
+    ia32_code.push_back("    call LeerChar");
+    ia32_code.push_back("    pop edx");
+    ia32_code.push_back("    pop ecx");
+    ia32_code.push_back("    pop eax");
+    ia32_code.push_back("    cmp byte [ecx], 10");
+    ia32_code.push_back("    je SaiLeerString");
+    ia32_code.push_back("    inc ecx");
+    ia32_code.push_back("    jmp LoopLeerString");
+    ia32_code.push_back("SaiLeerString:    ret 8"); 
 }
 
 void proc_out_s (std::vector<std::string> &ia32_code) {
