@@ -228,6 +228,7 @@ void proc_in(std::vector<std::string> &ia32_code) {
     ia32_code.push_back("    push ebx");
     ia32_code.push_back("    mov ecx, ia32_number_buffer");
     ia32_code.push_back("    mov eax, 0");
+    ia32_code.push_back("    dec ebx");
     ia32_code.push_back("read_char: mov dl, byte [ecx]");
     ia32_code.push_back("    dec ebx");
     ia32_code.push_back("    push eax");
@@ -266,8 +267,10 @@ void proc_in(std::vector<std::string> &ia32_code) {
     ia32_code.push_back("    jle final");
     ia32_code.push_back("    dec ebx");
     ia32_code.push_back("    push ecx");
+    ia32_code.push_back("    push edx");
     ia32_code.push_back("    mov ecx, 10");
     ia32_code.push_back("    mul ecx");
+    ia32_code.push_back("    pop edx");
     ia32_code.push_back("    pop ecx");
     ia32_code.push_back("    sub edx, '0'");
     ia32_code.push_back("    add eax, edx");
