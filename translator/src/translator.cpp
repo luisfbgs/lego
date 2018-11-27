@@ -175,9 +175,9 @@ std::vector<std::string> Translator::izi_to_ia32 (Line izi_line) {
     else if (operation == "stop") {
         convert_stop(ia32);
     }
-    // else if (operation == "input") {
-    //     convert_in(operands[0], ia32);
-    // }
+    else if (operation == "input") {
+        convert_in(operands[0], ia32);
+    }
     else if (operation == "c_input") {
         convert_in_c(operands[0], ia32);
     }
@@ -220,50 +220,68 @@ std::vector<Line> Translator::pre_process () {
 
 void proc_in(std::vector<std::string> &ia32_code) {
     ia32_code.push_back("LeerInteiro:");
+    ia32_code.push_back("    enter 0,0");
     ia32_code.push_back("    push 10");
     ia32_code.push_back("    push ia32_number_buffer");
     ia32_code.push_back("    call LeerString");
-    ia32_code.push_back("    push ESI   ");
-    ia32_code.push_back("    mov ESI, ia32_number_buffer");
-    ia32_code.push_back("read_char:mov edx, [ESI]");
-    ia32_code.push_back("    inc ESI");
+    ia32_code.push_back("    mov ebx, eax");
+    ia32_code.push_back("    push ebx");
+    ia32_code.push_back("    mov ecx, ia32_number_buffer");
+    ia32_code.push_back("    mov eax, 0");
+    ia32_code.push_back("    dec ebx");
+    ia32_code.push_back("read_char: mov dl, byte [ecx]");
+    ia32_code.push_back("    dec ebx");
+    ia32_code.push_back("    push eax");
+    ia32_code.push_back("    mov al, dl");
+    ia32_code.push_back("    cbw");
+    ia32_code.push_back("    cwde");
+    ia32_code.push_back("    mov edx, eax");
+    ia32_code.push_back("    pop eax");
+    ia32_code.push_back("    inc ecx");
     ia32_code.push_back("    cmp edx, '-'");
     ia32_code.push_back("    je minus");
     ia32_code.push_back("    cmp edx, '+'");
     ia32_code.push_back("    je plus");
     ia32_code.push_back("    jmp read_number");
     ia32_code.push_back("minus:");
-    ia32_code.push_back("    sub edx, edx");
-    ia32_code.push_back("    dec edx");
-    ia32_code.push_back("    jmp read_char");
+    ia32_code.push_back("    push dword -1");
+    ia32_code.push_back("    jmp read_char_n");
     ia32_code.push_back("plus:");
-    ia32_code.push_back("    sub edx, edx");
-    ia32_code.push_back("    inc edx");
-    ia32_code.push_back("    jmp read_char");
+    ia32_code.push_back("    push dword 1");
+    ia32_code.push_back("    jmp read_char_n");
     ia32_code.push_back("read_number:");
-    ia32_code.push_back("    sub ebx, ebx");
+    ia32_code.push_back("    push dword 1");
     ia32_code.push_back("    sub edx, '0'");
-    ia32_code.push_back("    add ebx, edx");
+    ia32_code.push_back("    add eax, edx");
+
+    ia32_code.push_back("read_char_n: mov dl, byte [ecx]");
+    ia32_code.push_back("    push eax");
+    ia32_code.push_back("    mov al, dl");
+    ia32_code.push_back("    cbw");
+    ia32_code.push_back("    cwde");
+    ia32_code.push_back("    mov edx, eax");
+    ia32_code.push_back("    pop eax");
+    ia32_code.push_back("    inc ecx");
+
+    ia32_code.push_back("    cmp ebx, 0");
+    ia32_code.push_back("    jle final");
+    ia32_code.push_back("    dec ebx");
+    ia32_code.push_back("    push ecx");
+    ia32_code.push_back("    push edx");
     ia32_code.push_back("    mov ecx, 10");
-
-    ia32_code.push_back("read_char_n: mov edx, [ESI]");
-    ia32_code.push_back("    inc ESI");
-
-    ia32_code.push_back("    cmp edx, 0");
-    ia32_code.push_back("    je final");
+    ia32_code.push_back("    mul ecx");
+    ia32_code.push_back("    pop edx");
+    ia32_code.push_back("    pop ecx");
     ia32_code.push_back("    sub edx, '0'");
-    ia32_code.push_back("    mov eax, ebx");
-    ia32_code.push_back("    mul ecx");
-    ia32_code.push_back("    mov ebx, eax");
-    ia32_code.push_back("    add ebx, edx");
-    ia32_code.push_back("    mov eax, ecx");
-    ia32_code.push_back("    mov ecx, 10");
-    ia32_code.push_back("    mul ecx");
-    ia32_code.push_back("    mov ecx, eax");
+    ia32_code.push_back("    add eax, edx");
     ia32_code.push_back("    jmp read_char_n");
     ia32_code.push_back("final:");
-    ia32_code.push_back("    pop ESI");
-    ia32_code.push_back("    mov [ESP+4], ebx");
+    ia32_code.push_back("    pop edx");
+    ia32_code.push_back("    mul edx");
+    ia32_code.push_back("    mov edx, [ESP+12]");
+    ia32_code.push_back("    mov [edx], eax");
+    ia32_code.push_back("    pop eax");
+    ia32_code.push_back("    leave");
     ia32_code.push_back("    ret 4");
 
 }
