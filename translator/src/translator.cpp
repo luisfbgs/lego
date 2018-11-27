@@ -216,7 +216,50 @@ std::vector<Line> Translator::pre_process () {
 }
 
 void proc_in(std::vector<std::string> &ia32_code) {
-    
+    ia32_code.push_back("LeerInteiro:");
+    ia32_code.push_back("    push 10");
+    ia32_code.push_back("    push ia32_number_buffer");
+    ia32_code.push_back("    call LeerString");
+    ia32_code.push_back("    push ia32_number_buffer");
+    ia32_code.push_back("read_char:mov edx, [ia32_number_buffer]");
+    ia32_code.push_back("    inc ia32_number_buffer");
+    ia32_code.push_back("    cmp edx, '-'");
+    ia32_code.push_back("    je minus");
+    ia32_code.push_back("    cmp edx, '+'");
+    ia32_code.push_back("    je plus");
+    ia32_code.push_back("    jmp read_number");
+    ia32_code.push_back("minus:");
+    ia32_code.push_back("    sub edx, edx");
+    ia32_code.push_back("    dec edx");
+    ia32_code.push_back("    jmp read_char");
+    ia32_code.push_back("plus:");
+    ia32_code.push_back("    sub edx, edx");
+    ia32_code.push_back("    inc edx");
+    ia32_code.push_back("    jmp read_char");
+    ia32_code.push_back("read_number:");
+    ia32_code.push_back("    sub ebx, ebx");
+    ia32_code.push_back("    sub edx, '0'");
+    ia32_code.push_back("    add ebx, edx");
+    ia32_code.push_back("    mov ecx, 10");
+
+    ia32_code.push_back("read_char_n: mov edx, [ia32_number_buffer]");
+    ia32_code.push_back("    inc ia32_number_buffer");
+
+    ia32_code.push_back("    cmp edx, 0");
+    ia32_code.push_back("    je final");
+    ia32_code.push_back("    sub edx, '0'");
+    ia32_code.push_back("    mov eax, edx");
+    ia32_code.push_back("    mul ecx");
+    ia32_code.push_back("    add ebx, eax");
+    ia32_code.push_back("    mov eax, ecx");
+    ia32_code.push_back("    mul 10");
+    ia32_code.push_back("    mov ecx, eax");
+    ia32_code.push_back("    jmp read_char_n");
+    ia32_code.push_back("final:");
+    ia32_code.push_back("    pop ia32_number_buffer");
+    ia32_code.push_back("    mov [ESP+4], [ebx]");
+    ia32_code.push_back("    ret 4");
+
 }
 
 void proc_in_c (std::vector<std::string> &ia32_code) {
@@ -293,6 +336,9 @@ void Translator::translate (std::vector<Line> code) {
     proc_in_s(ia32_code);
     proc_out_s(ia32_code);
     proc_in(ia32_code);
+    ia32_code.push_back("section .bss");
+    ia32_code.push_back("ia32_number_buffer: resb 10");
+
 
     out.open(ia32_file);
 
