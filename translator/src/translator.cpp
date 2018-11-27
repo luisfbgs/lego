@@ -175,9 +175,9 @@ std::vector<std::string> Translator::izi_to_ia32 (Line izi_line) {
     else if (operation == "stop") {
         convert_stop(ia32);
     }
-    else if (operation == "input") {
-        convert_in(operands[0], ia32);
-    }
+    // else if (operation == "input") {
+    //     convert_in(operands[0], ia32);
+    // }
     else if (operation == "c_input") {
         convert_in_c(operands[0], ia32);
     }
@@ -218,34 +218,38 @@ std::vector<Line> Translator::pre_process () {
     return code;
 }
 
-void proc_in(std::vector<std::string> &ia32_code) {
-    
-}
+// void proc_in(std::vector<std::string> &ia32_code) {
+
+// }
 
 void proc_in_c (std::vector<std::string> &ia32_code) {
-    ia32_code.push_back("LeerChar:    mov eax, 3");
+    ia32_code.push_back("LeerChar:    enter 0,0");
+    ia32_code.push_back("    mov eax, 3");
     ia32_code.push_back("    mov ebx, 1");
-    ia32_code.push_back("    mov ecx, [ESP+4]");
+    ia32_code.push_back("    mov ecx, [ESP+8]");
     ia32_code.push_back("    mov edx, 1");
     ia32_code.push_back("    int 80h");
     ia32_code.push_back("    mov eax, 1");
+    ia32_code.push_back("    leave");
     ia32_code.push_back("    ret 4"); 
 }
 
 void proc_out_c (std::vector<std::string> &ia32_code) {
-    ia32_code.push_back("EscreverChar:    mov eax, 4");
+    ia32_code.push_back("EscreverChar:    enter 0,0");
+    ia32_code.push_back("    mov eax, 4");
     ia32_code.push_back("    mov ebx, 1");
-    ia32_code.push_back("    mov ecx, [ESP+4]");
+    ia32_code.push_back("    mov ecx, [ESP+8]");
     ia32_code.push_back("    mov edx, 1");
     ia32_code.push_back("    int 80h");
     ia32_code.push_back("    mov eax, 1");
+    ia32_code.push_back("    leave");
     ia32_code.push_back("    ret 4"); 
 }
 
 void proc_in_s (std::vector<std::string> &ia32_code) {
-    ia32_code.push_back("LeerString:");
-    ia32_code.push_back("    mov ecx, [ESP+4]");
-    ia32_code.push_back("    mov edx, [ESP+8]");
+    ia32_code.push_back("LeerString: enter 0,0");
+    ia32_code.push_back("    mov ecx, [ESP+8]");
+    ia32_code.push_back("    mov edx, [ESP+12]");
     ia32_code.push_back("    mov eax, 0");
     ia32_code.push_back("LoopLeerString:");
     ia32_code.push_back("    cmp edx, 0");
@@ -264,16 +268,19 @@ void proc_in_s (std::vector<std::string> &ia32_code) {
     ia32_code.push_back("    je SaiLeerString");
     ia32_code.push_back("    inc ecx");
     ia32_code.push_back("    jmp LoopLeerString");
-    ia32_code.push_back("SaiLeerString:    ret 8"); 
+    ia32_code.push_back("SaiLeerString:    leave");
+    ia32_code.push_back("    ret 8"); 
 }
 
 void proc_out_s (std::vector<std::string> &ia32_code) {
-    ia32_code.push_back("EscreverString:    mov eax, 4");
+    ia32_code.push_back("EscreverString: enter 0,0");
+    ia32_code.push_back("    mov eax, 4");
     ia32_code.push_back("    mov ebx, 1");
-    ia32_code.push_back("    mov ecx, [ESP+4]");
-    ia32_code.push_back("    mov edx, [ESP+8]");
+    ia32_code.push_back("    mov ecx, [ESP+8]");
+    ia32_code.push_back("    mov edx, [ESP+12]");
     ia32_code.push_back("    int 80h");
-    ia32_code.push_back("    mov eax, [ESP+8]");
+    ia32_code.push_back("    mov eax, [ESP+12]");
+    ia32_code.push_back("    leave");
     ia32_code.push_back("    ret 8"); 
 }
 
@@ -298,7 +305,7 @@ void Translator::translate (std::vector<Line> code) {
     proc_out_c(ia32_code);
     proc_in_s(ia32_code);
     proc_out_s(ia32_code);
-    proc_in(ia32_code);
+    // proc_in(ia32_code);
 
     out.open(ia32_file);
 
