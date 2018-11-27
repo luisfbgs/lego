@@ -223,9 +223,10 @@ void proc_in(std::vector<std::string> &ia32_code) {
     ia32_code.push_back("    push 10");
     ia32_code.push_back("    push ia32_number_buffer");
     ia32_code.push_back("    call LeerString");
-    ia32_code.push_back("    push ia32_number_buffer");
-    ia32_code.push_back("read_char:mov edx, [ia32_number_buffer]");
-    ia32_code.push_back("    inc ia32_number_buffer");
+    ia32_code.push_back("    push ESI   ");
+    ia32_code.push_back("    mov ESI, ia32_number_buffer");
+    ia32_code.push_back("read_char:mov edx, [ESI]");
+    ia32_code.push_back("    inc ESI");
     ia32_code.push_back("    cmp edx, '-'");
     ia32_code.push_back("    je minus");
     ia32_code.push_back("    cmp edx, '+'");
@@ -245,22 +246,24 @@ void proc_in(std::vector<std::string> &ia32_code) {
     ia32_code.push_back("    add ebx, edx");
     ia32_code.push_back("    mov ecx, 10");
 
-    ia32_code.push_back("read_char_n: mov edx, [ia32_number_buffer]");
-    ia32_code.push_back("    inc ia32_number_buffer");
+    ia32_code.push_back("read_char_n: mov edx, [ESI]");
+    ia32_code.push_back("    inc ESI");
 
     ia32_code.push_back("    cmp edx, 0");
     ia32_code.push_back("    je final");
     ia32_code.push_back("    sub edx, '0'");
-    ia32_code.push_back("    mov eax, edx");
+    ia32_code.push_back("    mov eax, ebx");
     ia32_code.push_back("    mul ecx");
-    ia32_code.push_back("    add ebx, eax");
+    ia32_code.push_back("    mov ebx, eax");
+    ia32_code.push_back("    add ebx, edx");
     ia32_code.push_back("    mov eax, ecx");
-    ia32_code.push_back("    mul 10");
+    ia32_code.push_back("    mov ecx, 10");
+    ia32_code.push_back("    mul ecx");
     ia32_code.push_back("    mov ecx, eax");
     ia32_code.push_back("    jmp read_char_n");
     ia32_code.push_back("final:");
-    ia32_code.push_back("    pop ia32_number_buffer");
-    ia32_code.push_back("    mov [ESP+4], [ebx]");
+    ia32_code.push_back("    pop ESI");
+    ia32_code.push_back("    mov [ESP+4], ebx");
     ia32_code.push_back("    ret 4");
 
 }

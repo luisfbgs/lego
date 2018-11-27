@@ -16,3 +16,5 @@ $ cd translator
 $ ./build.sh
 $ ./<nome do arquivo sem extnesão>
 ```
+
+INSTRUÇÕES INPUT E OUTPUT NÃO FUNCIONAM
