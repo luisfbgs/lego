@@ -244,10 +244,10 @@ void proc_in(std::vector<std::string> &ia32_code) {
     ia32_code.push_back("    jmp read_number");
     ia32_code.push_back("minus:");
     ia32_code.push_back("    push dword -1");
-    ia32_code.push_back("    jmp read_char");
+    ia32_code.push_back("    jmp read_char_n");
     ia32_code.push_back("plus:");
     ia32_code.push_back("    push dword 1");
-    ia32_code.push_back("    jmp read_char");
+    ia32_code.push_back("    jmp read_char_n");
     ia32_code.push_back("read_number:");
     ia32_code.push_back("    push dword 1");
     ia32_code.push_back("    sub edx, '0'");
