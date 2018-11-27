@@ -182,7 +182,10 @@ std::vector<std::string> Translator::izi_to_ia32 (Line izi_line) {
     }
 
     if (!izi_line.label.empty()) {
-        if (ia32.empty()) {
+        if (izi_line.operation == "equ") {
+            ia32.push_back(izi_line.label + " equ " + izi_line.operands[0]);
+        }
+        else if (ia32.empty()) {
             ia32.push_back(izi_line.label + ": ");
         }
         else {
@@ -211,6 +214,7 @@ void proc_in_c (std::vector<std::string> &ia32_code) {
     ia32_code.push_back("    mov ecx, [ESP+4]");
     ia32_code.push_back("    mov edx, 1");
     ia32_code.push_back("    int 80h");
+    ia32_code.push_back("    mov eax, 1");
     ia32_code.push_back("    ret 4"); 
 }
 
@@ -220,6 +224,7 @@ void proc_out_c (std::vector<std::string> &ia32_code) {
     ia32_code.push_back("    mov ecx, [ESP+4]");
     ia32_code.push_back("    mov edx, 1");
     ia32_code.push_back("    int 80h");
+    ia32_code.push_back("    mov eax, 1");
     ia32_code.push_back("    ret 4"); 
 }
 
@@ -254,6 +259,7 @@ void proc_out_s (std::vector<std::string> &ia32_code) {
     ia32_code.push_back("    mov ecx, [ESP+4]");
     ia32_code.push_back("    mov edx, [ESP+8]");
     ia32_code.push_back("    int 80h");
+    ia32_code.push_back("    mov eax, [ESP+8]");
     ia32_code.push_back("    ret 8"); 
 }
 
